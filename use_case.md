@@ -40,13 +40,12 @@ Specialist -- Review
 Specialist -- Request
 Specialist -- Complete
 
-Register ..> : include ConfirmPhone
-Login ..> : include ConfirmPhone
-Submit ..> : include Validate
-Supplement ..> : include Validate
-Complete ..> : include Determine
-Request ..> : extend Review
-
+Register ..> ConfirmPhone : include
+Login ..> ConfirmPhone : include
+Submit ..> Validate : include
+Supplement ..> Validate : include
+Complete ..> Determine : include
+Request ..> Review : extend
 note for Request "Условие: недостаточно сведений для определения маршрута"
 note for Complete "Предусловие: сведения проверены и достаточны для выдачи результата"
 ```
