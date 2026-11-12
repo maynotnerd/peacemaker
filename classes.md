@@ -70,6 +70,14 @@ classDiagram
         -String explanation
         -DateTime issuedAt
     }
+    class RouteDecision {
+        +String explanation
+        +String nextAction
+        +String deadline
+    }
+    class OperationResult {
+        +String errorMessage
+    }
     class ReviewForm {
         +complete(applicationId) void
         +showResult(result) void
@@ -111,6 +119,12 @@ classDiagram
     ReviewService ..> Application : завершает
     ReviewService ..> RoutePolicy : определяет маршрут
     RoutePolicy ..> Route : использует правила
+    RouteDecision "0..*" --> "0..1" Route : выбранный маршрут
+    OperationResult --> "0..1" Result : выданный результат
+    RoutePolicy ..> RouteDecision : возвращает
+    Application ..> RouteDecision : использует
+    ReviewService ..> OperationResult : возвращает
+    ReviewController ..> OperationResult : возвращает
 ```
 
 ## Назначение
@@ -156,6 +170,6 @@ classDiagram
 
 ## Обозначения данных и ограничения
 
-questionnaire — набор полей анкеты, хранящихся в Application, а не отдельная сущность. RouteDecision — возвращаемые данные: выбранный маршрут или объяснение неприменимости, дальнейшее действие и срок. OperationResult — результат операции: выданный Result либо причина невозможности завершения. List — список объектов. Язык программирования и СУБД этой диаграммой не задаются.
+questionnaire — набор полей анкеты, хранящихся в Application, а не отдельная сущность. RouteDecision и OperationResult передают данные между методами. RouteDecision содержит ссылку на выбранный маршрут, действие и срок. Если маршрут не определён, ссылка, действие и срок отсутствуют, а explanation содержит причину. OperationResult содержит либо ссылку на выданный Result при успехе, либо errorMessage при невозможности завершения. Эти типы используются внутри приложения и не требуют отдельных таблиц. List — список объектов. Язык программирования и СУБД этой диаграммой не задаются.
 
 Если есть открытый запрос, завершение отклоняется с сообщением «Дождитесь ответа заявителя». Если запросов нет, но статус другой, показывается «Завершение возможно только в статусе “На рассмотрении”». Уже завершённая заявка не получает второй результат. Текущий статус соответствует последней записи истории; изменённая заявка и связанные записи сохраняются совместно. Все данные, включая содержимое документов и сеансы, сохраняются в БД.
